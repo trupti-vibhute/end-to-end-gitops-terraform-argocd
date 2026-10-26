@@ -85,8 +85,10 @@ module "eks" {
   eks_managed_node_groups = {
     default = {
       # Amazon Linux 2 images aren't published for Kubernetes 1.33+, so use AL2023
-      ami_type       = "AL2023_x86_64_STANDARD"
-      instance_types = ["t3.medium"]
+      ami_type = "AL2023_x86_64_STANDARD"
+      # Free-plan AWS accounts can only launch free-tier-eligible types;
+      # c7i-flex.large matches t3.medium (2 vCPU, 4 GiB) and fits more pods (29 vs 17)
+      instance_types = ["c7i-flex.large"]
 
       min_size     = 2
       max_size     = 3

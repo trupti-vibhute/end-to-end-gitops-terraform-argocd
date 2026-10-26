@@ -1,0 +1,33 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Every resource below is placed in this namespace
+namespace: 3tirewebapp-dev
+
+# argocd-app.yaml is deliberately not listed: Terraform applies it, not ArgoCD
+resources:
+  - namespace.yaml
+  - secret.yaml
+  - postgres.yaml
+  - backend.yaml
+  - frontend.yaml
+
+commonAnnotations:
+  app.kubernetes.io/version: "1.0"
+
+# Change a tag here, commit, push: ArgoCD rolls out the new version
+images:
+  - name: metaburger/goal-tracker-frontend
+    newTag: "20261024-001314"
+  - name: metaburger/goal-tracker-backend
+    newTag: "20261024-001422"
+  - name: postgres
+    newTag: "15"
+
+replicas:
+  - name: frontend
+    count: 2
+  - name: backend
+    count: 2
+  - name: postgres
+    count: 1

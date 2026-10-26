@@ -65,9 +65,12 @@ module "eks" {
   cluster_name    = var.cluster_name
   cluster_version = var.kubernetes_version
 
-  # Lets kubectl/Terraform on your laptop reach the Kubernetes API.
-  # Nodes still talk to it privately from inside the VPC.
-  cluster_endpoint_public_access = true
+  # Nodes and pods reach the API server privately, inside the VPC.
+  # The public endpoint only exists so kubectl/Terraform on an allowlisted
+  # laptop can reach it; every other IP on the internet is rejected.
+  cluster_endpoint_private_access      = true
+  cluster_endpoint_public_access       = true
+  cluster_endpoint_public_access_cidrs = var.api_allowed_cidrs
 
   vpc_id = module.vpc.vpc_id
   # Worker nodes and the control plane's network interfaces live in private subnets

@@ -27,3 +27,13 @@ variable "argocd_version" {
   type        = string
   default     = "v3.5.6"
 }
+
+variable "api_allowed_cidrs" {
+  description = "CIDRs allowed to reach the EKS API server's public endpoint (e.g. your IP as x.x.x.x/32). Set in terraform.tfvars."
+  type        = list(string)
+
+  validation {
+    condition     = length(var.api_allowed_cidrs) > 0 && !contains(var.api_allowed_cidrs, "0.0.0.0/0")
+    error_message = "Give at least one CIDR, and never 0.0.0.0/0: that exposes the API server to the whole internet."
+  }
+}
